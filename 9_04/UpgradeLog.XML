@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SynchronousMultipleCapture">
+</Property><Property Name="Файл решения" Value="C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC#\CSharpProjects\SynchronousMultipleCapture\SynchronousMultipleCapture.sln">
+</Property><Property Name="Date" Value="19 января 2014 г.">
+</Property><Property Name="Time" Value="19:55:15">
+</Property></Properties><Event ErrorLevel="0" Project="SynchronousMultipleCapture" Source="SynchronousMultipleCapture.csproj" Description="Проект успешно преобразован">
+</Event><Event ErrorLevel="3" Project="SynchronousMultipleCapture" Source="SynchronousMultipleCapture.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SynchronousMultipleCapture" Source="SynchronousMultipleCapture.csproj" Description="Сканирование завершено: обновление для файлов проекта не требуется.">
+</Event></UpgradeLog>
