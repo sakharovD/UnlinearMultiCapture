@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using SynchronousMultipleCapture.GameLogic.GameElements;
 using SynchronousMultipleCapture.View;
+using SynchronousMultipleCapture.Functions;
 
 namespace SynchronousMultipleCapture.GameLogic.Games
 {
@@ -25,11 +26,20 @@ namespace SynchronousMultipleCapture.GameLogic.Games
         public List<Pursuer> pursuers = new List<Pursuer>();
         public GameStyleFabric style = new GameStyleFabric();
         int captureCount = 0;
-        int razb = 1000;
 
-        public double Int(Game game, int j, double timeStep)
+        public double Int(double t1, double t2, int razb, IFunction f)
         {
-            switch (j)
+            double sum = 0;
+            double delta = (t2 - t1) / razb;
+            for (int k = 0; k < razb; k++)
+            {
+                double t = t1 + k * delta;
+                sum += f.GetValueAt(t) * delta;
+            }
+
+            return sum;
+
+            /*switch (j)
             {
                 case 1: 
                     {
@@ -79,7 +89,7 @@ namespace SynchronousMultipleCapture.GameLogic.Games
                     {
                         return 0;
                     }
-            } 
+            } */
         }
 
 
@@ -92,26 +102,29 @@ namespace SynchronousMultipleCapture.GameLogic.Games
                 case 0:
                     {
                         //if !(checkBox1.)
-                        {evader.coordinates += evader.v * timeStep; break;}
+                        evader.coordinates += evader.v * timeStep;
+                        break;
                     }
                 case 1: 
                     {
                         var variable1 = Math.Exp(1 - Math.Cos(game.time));
                         var variable2 = Math.Sin(game.time);
+                        var integralValue = Int(0, game.time, 1000, new Function1());
+                        var variable3 = evader.v.X * integralValue;
                         var X = evader.coordinates.X;
                         var Y = evader.coordinates.Y;
                         evader.coordinates.Y = /*Y * variable1 +*/ X * variable2 * variable1;
-                        evader.coordinates.X = /*X * variable1 +*/ variable1 * Int(game, 1, timeStep);
+                        evader.coordinates.X = /*X * variable1 +*/ variable1 * variable3;
                         break; 
                     }
                 case 2: 
                     {
-                        var v2 = Math.Sin(game.time);
-                        var v3 = Math.Cos(game.time);
-                        var X = evader.coordinates.X;
-                        var Y = evader.coordinates.Y;
-                        evader.coordinates.X = /*X - Y * v2 +*/ Int(game, 3, timeStep) - v2 * Int(game, 4, timeStep);
-                        evader.coordinates.Y = /*X * v2 + Y * v3 * v3 +*/ v2 * Int(game, 3, timeStep) + v3 * v3 * Int(game, 4, timeStep);
+                       // var v2 = Math.Sin(game.time);
+                       // var v3 = Math.Cos(game.time);
+                       // var X = evader.coordinates.X;
+                       // var Y = evader.coordinates.Y;
+                       // evader.coordinates.X = /*X - Y * v2 +*/ Int(game, 3, timeStep) - v2 * Int(game, 4, timeStep);
+                       // evader.coordinates.Y = /*X * v2 + Y * v3 * v3 +*/ v2 * Int(game, 3, timeStep) + v3 * v3 * Int(game, 4, timeStep);
                         break;
                     }
             }

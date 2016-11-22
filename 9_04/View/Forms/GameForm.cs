@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Windows;
 using SynchronousMultipleCapture.GameLogic.Games;
 using SynchronousMultipleCapture.GameLogic.GameElements;
+using Point = System.Windows.Point;
 
 namespace SynchronousMultipleCapture
 {
@@ -182,24 +183,13 @@ namespace SynchronousMultipleCapture
         private void setEvaderDirectionByCursorePosition()
         {
             // определить направление движения убегающего по мышке
-            System.Windows.Point centerPoint = new System.Windows.Point(0, 0);
-            System.Windows.Point cursorePoint = new System.Windows.Point(Cursor.Position.X - Screen.PrimaryScreen.Bounds.Width / 2, Screen.PrimaryScreen.Bounds.Height / 2 - Cursor.Position.Y);
-            double angle = GetAngleFromPoint(cursorePoint, centerPoint);
-            double angleRad = (Math.PI / 180) * angle;
+            var centerPoint = new Point(0, 0);
+            var cursorePoint = new Point(
+                Cursor.Position.X - Screen.PrimaryScreen.Bounds.Width / 2,
+                Screen.PrimaryScreen.Bounds.Height / 2 - Cursor.Position.Y);
+            var angle = GetAngleFromPoint(cursorePoint, centerPoint);
+            var angleRad = (Math.PI / 180) * angle;
             game.evader.v = new Vector(Math.Cos(angleRad), -Math.Sin(angleRad));
-
-         /*   switch (A)
-            {
-                case 0: ;
-                case 1: return new Vector(
-                     Z1 * Math.Exp(1 - Math.Cos(time)),
-                     Z1 * Math.Sin(time) * Math.Exp(1 - Math.Cos(time)) + Z2 * Math.Exp(1 - Math.Cos(time))
-                                    );
-                case 2: return new Vector(
-                     Z1 - Z2 * Math.Sin(time),
-                     Z1 * Math.Sin(time) + Z2 * Math.Cos(time) * Math.Cos(time)
-                                    );
-            } */
         }
 
         /// <summary> Изменение управления убегающего</summary> 
@@ -252,7 +242,7 @@ namespace SynchronousMultipleCapture
             return point;
         }
 
-        private double GetAngleFromPoint(System.Windows.Point point, System.Windows.Point centerPoint)
+        private double GetAngleFromPoint(Point point, Point centerPoint)
         {
             double dx = (point.Y - centerPoint.Y);
             double dy = (point.X - centerPoint.X);
