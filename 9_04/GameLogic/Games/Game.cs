@@ -26,19 +26,34 @@ namespace SynchronousMultipleCapture.GameLogic.Games
         public List<Pursuer> pursuers = new List<Pursuer>();
         public GameStyleFabric style = new GameStyleFabric();
         int captureCount = 0;
+        public List<double> Integrals;
 
         public double Int(double t1, double t2, int razb, IFunction f)
         {
             double sum = 0;
             double delta = (t2 - t1) / razb;
-            for (int k = 0; k < razb; k++)
+
+            if (t2 < 2 * GameForm.timeStep)
             {
-                double t = t1 + k * delta;
-                sum += f.GetValueAt(t) * delta;
+                for (int k = 0; k < razb; k++)
+                {
+                    double t = t1 + k * delta;
+                    sum += f.GetValueAt(t) * delta;
+                }
+                Integrals.Add(sum);
+                return sum;
             }
 
-            return sum;
+            else
+            {
+                for (int k = 0; k < razb; k++)
+                {
+                    double t = t1 + k * delta;
+                    sum += f.GetValueAt(t) * delta;
+                }
 
+                return sum + Integrals[Math.Truncate(t2/GameForm.timeStep)];
+            }
             /*switch (j)
             {
                 case 1: 
