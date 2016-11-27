@@ -6,7 +6,6 @@ using System.Text;
 using System.Windows;
 using SynchronousMultipleCapture.GameLogic.GameElements;
 using SynchronousMultipleCapture.View;
-using SynchronousMultipleCapture.Functions;
 
 namespace SynchronousMultipleCapture.GameLogic.Games
 {
@@ -20,6 +19,7 @@ namespace SynchronousMultipleCapture.GameLogic.Games
         public int A;
         public Boolean Stand;
         public double time = 0;
+        public double timeDelta = 1;
         /// <summary> Убегающий </summary>
         public Evader evader;
         /// <summary> Группа преследователей </summary>
@@ -27,96 +27,48 @@ namespace SynchronousMultipleCapture.GameLogic.Games
         public GameStyleFabric style = new GameStyleFabric();
         int captureCount = 0;
         public List<double> Integrals;
+        // функция от времени.
+        public delegate double Function(double t);
 
-        public double Int(double t1, double t2, int razb, IFunction f)
+        public double Integral(double t1, double t2, int pointsCount, Function f)
         {
             double sum = 0;
-            double delta = (t2 - t1) / razb;
+            double delta = (t2 - t1) / pointsCount;
 
-            if (t2 < 2 * GameForm.timeStep)
-            {
-                for (int k = 0; k < razb; k++)
+            //if (t2 < 2 * GameForm.timeStep)
+            //{
+                for (int k = 0; k < pointsCount; k++)
                 {
                     double t = t1 + k * delta;
-                    sum += f.GetValueAt(t) * delta;
+                    sum += f(t) * delta;
                 }
-                Integrals.Add(sum);
+                //Integrals.Add(sum);
                 return sum;
-            }
+            //}
 
-            else
+            /*else
             {
                 for (int k = 0; k < razb; k++)
                 {
                     double t = t1 + k * delta;
-                    sum += f.GetValueAt(t) * delta;
+                    sum += f(t) * delta;
                 }
 
                 return sum + Integrals[Math.Truncate(t2/GameForm.timeStep)];
-            }
-            /*switch (j)
-            {
-                case 1: 
-                    {
-                        double sum = 0;
-                        for (int k = 0; k < razb; k++)
-                        {
-                            sum += Math.Exp(Math.Cos(game.time + k * timeStep / (2 * razb)) - 1);
-                        }
-                        return evader.v.X * sum; 
-                        break; 
-                    }
-                case 2: 
-                    {
-                        double sum = 0;
-                        double sum2 = 0;
-                        for (int k = 0; k < razb; k++)
-                        { 
-                            sum += Math.Sin(game.time + k * timeStep / (2 * razb)) * Math.Exp(Math.Cos(game.time + k * timeStep / (2 * razb)) - 1); 
-                            sum2 += Math.Exp(Math.Cos(game.time + k * timeStep / (2 * razb)) - 1);
-                        }
-                        return -evader.v.X * sum + evader.v.Y * sum2; 
-                        break; 
-                    }
-                case 3: 
-                    {
-                        double sum = 0;
-                        double sum2 = 0;
-                        for (int k = 0; k < razb; k++)
-                        {
-                            sum += Math.Sin(game.time + k * timeStep / (2 * razb)) * (1 - Math.Sin(game.time + k * timeStep / (2 * razb))) ;
-                            sum2 += Math.Sin(game.time + k * timeStep / (2 * razb));
-                        }
-                        return evader.v.X * sum + evader.v.Y * sum2; 
-                        break; 
-                    }
-                case 4: 
-                    {
-                        double sum = 0;
-                        for (int k = 0; k < razb; k++)
-                        {
-                            sum += Math.Sin(game.time + k * timeStep / (2 * razb));
-                        }
-                        return -evader.v.X * sum + evader.v.Y; 
-                        break; 
-                    }
-                default:
-                    {
-                        return 0;
-                    }
-            } */
+            }*/
         }
-
-
 
         public void makeMove(double timeStep, Game game)
         {
+            // подынтегральные функции
+            Function f1 = (t) => Math.Exp(Math.Cos(t - 1));
+            Function f2 = (t) => t;
+
             // делаем шаг убегающего
             switch (A)
             {
                 case 0:
                     {
-                        //if !(checkBox1.)
                         evader.coordinates += evader.v * timeStep;
                         break;
                     }
@@ -124,10 +76,12 @@ namespace SynchronousMultipleCapture.GameLogic.Games
                     {
                         var variable1 = Math.Exp(1 - Math.Cos(game.time));
                         var variable2 = Math.Sin(game.time);
-                        var integralValue = Int(0, game.time, 1000, new Function1());
+                        var integralValue = Integral(0, game.time, 1000, f1);
                         var variable3 = evader.v.X * integralValue;
+                        // старные координаты
                         var X = evader.coordinates.X;
                         var Y = evader.coordinates.Y;
+                        // новые координаты
                         evader.coordinates.Y = /*Y * variable1 +*/ X * variable2 * variable1;
                         evader.coordinates.X = /*X * variable1 +*/ variable1 * variable3;
                         break; 
@@ -176,7 +130,8 @@ namespace SynchronousMultipleCapture.GameLogic.Games
             return captureCount >= M; // произошла M-кратная (не одновременная) поимка
         }
 
-        public Vector Phi(double Z1, double Z2, double time, int A) // фундаментальная матрица в случае А 
+        // фундаментальная матрица в случае А 
+        public Vector Phi(double Z1, double Z2, double time, int A)
         {
             switch (A)
             {

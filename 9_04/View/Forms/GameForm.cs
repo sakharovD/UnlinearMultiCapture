@@ -44,18 +44,36 @@ namespace SynchronousMultipleCapture
         /// <param name="e"></param>
         private void MainForm_Paint(object sender, PaintEventArgs e)
         {
-            if (game == null) return;
+            float coordToGraphichScale = 1;
+            // количество догоняющих в одной группе
+            // какой то непонятный расчет скалирования координат
+            int persuersInSet = game.pursuers.Count / game.M;
+            /*for (int i = 1; i <= game.pursuers.Count; i++)
+            {
+                int endOfseries = 0;
+                if (i % persuersInSet == 0) { endOfseries = 1; }
+                int j = i + 1 - endOfseries * persuersInSet;
+                Vector pers1Coord = game.pursuers[i - 1].coordinates;
+                Vector pers2Coord = game.pursuers[j - 1].coordinates;
+
+                if (Math.Abs(pers1Coord.X) > scal) { scal = pers1Coord.X; }
+                if (Math.Abs(pers1Coord.Y) > scal) { scal = pers1Coord.Y; }
+                if (Math.Abs(pers2Coord.X) > scal) { scal = pers2Coord.X; }
+                if (Math.Abs(pers2Coord.Y) > scal) { scal = pers2Coord.Y; }
+            }
+
+            if (game.A == 0) { scal = 200; }*/
 
             Graphics g = e.Graphics;
             float dx = this.Size.Width/2;
             float dy = this.Size.Height/2;
             g.TranslateTransform(dx, dy); // изменить начало координат обьекта graphics
 
-            // рисовать обьект - убегающий
-            Vector newcoords = game.evader.coordinates - new Vector(5, 5);
-            var x = (float)newcoords.X;
-            var y = (float)newcoords.Y;
+            // рисовать объект - убегающий
             var size = game.style.gameElementsSize;
+            Vector newcoords = game.evader.coordinates - new Vector(size / 2, size / 2);
+            var x = (float)newcoords.X * coordToGraphichScale;
+            var y = (float)newcoords.Y * coordToGraphichScale;
             g.FillEllipse(game.style.ColorPointEvader, x, y, size, size);
 
             // рисовать обьект - стрелочка убегающего
@@ -80,25 +98,9 @@ namespace SynchronousMultipleCapture
                  System.Drawing.Point pers2 = vectorToPoint(pers2Coord);
                  g.DrawLine(game.style.coorPenPersecutor, pers1, pers2);
              }*/
-
-            int persuersInSet = game.pursuers.Count / game.M;
-            double scal = 0;
-            for (int i = 1; i <= game.pursuers.Count; i++)
-            {
-                int endOfseries = 0;
-                if (i % persuersInSet == 0) { endOfseries = 1; }
-                int j = i + 1 - endOfseries * persuersInSet;
-                Vector pers1Coord = game.pursuers[i - 1].coordinates;
-                Vector pers2Coord = game.pursuers[j - 1].coordinates;
-
-                if (Math.Abs(pers1Coord.X) > scal) { scal = pers1Coord.X; }
-                if (Math.Abs(pers1Coord.Y) > scal) { scal = pers1Coord.Y; }
-                if (Math.Abs(pers2Coord.X) > scal) { scal = pers2Coord.X; }
-                if (Math.Abs(pers2Coord.Y) > scal) { scal = pers2Coord.Y; }
-            }
-
-            if (game.A == 0) { scal = 200; }
-
+             
+                        
+            // линии соединяющие догоняющих
             for (int i = 1; i <= game.pursuers.Count; i++)
             {
                 int endOfseries = 0;
@@ -107,8 +109,8 @@ namespace SynchronousMultipleCapture
                 Vector pers1Coord = game.pursuers[i - 1].coordinates;
                 Vector pers2Coord = game.pursuers[j - 1].coordinates;
 
-                var pers1 = vectorToPoint(pers1Coord / scal * 200);
-                var pers2 = vectorToPoint(pers2Coord / scal * 200);
+                var pers1 = vectorToPoint(pers1Coord * coordToGraphichScale);
+                var pers2 = vectorToPoint(pers2Coord * coordToGraphichScale);
                 g.DrawLine(game.style.coorPenPersecutor, pers1, pers2);
             }
 
@@ -116,17 +118,17 @@ namespace SynchronousMultipleCapture
             // отрисовать все обьекты - догоняющие
             for (int i = 0; i < game.pursuers.Count; i++)
             {
-                Vector newcoords1 = game.pursuers[i].coordinates - new Vector(5, 5);
-                int x1 = (int)Math.Round(newcoords1.X / scal * 200);
-                int y1 = (int)Math.Round(newcoords1.Y / scal * 200);
                 var size1 = game.style.gameElementsSize;
+                Vector newcoords1 = game.pursuers[i].coordinates - new Vector(size1 / 2, size1 / 2);
+                int x1 = (int)Math.Round(newcoords1.X * coordToGraphichScale);
+                int y1 = (int)Math.Round(newcoords1.Y * coordToGraphichScale);
                 g.FillEllipse(game.style.ColorPointPersecutors, x1, y1, size1, size1);
 
                 // рисовать обьекты - стрелочки для догоняющих
                 Vector persCoord = game.pursuers[i].coordinates;
                 Vector persEndCoord = game.pursuers[i].coordinates + game.style.evaderArrowSize * game.pursuers[i].u;
-                var pers3 = vectorToPoint(persCoord / scal * 200);
-                var pers4 = vectorToPoint(persEndCoord / scal * 200);
+                var pers3 = vectorToPoint(persCoord * coordToGraphichScale);
+                var pers4 = vectorToPoint(persEndCoord * coordToGraphichScale);
                 g.DrawLine(game.style.ColorVelocityPersecutors, pers3, pers4);
             }
 
@@ -139,7 +141,7 @@ namespace SynchronousMultipleCapture
         /// <param name="e"></param>
         private void timEps_Tick(object sender, EventArgs e)
         {
-            game.time += this.timEps.Interval;
+            game.time += game.timeDelta;
 
             setEvaderDirectionByCursorePosition();
 

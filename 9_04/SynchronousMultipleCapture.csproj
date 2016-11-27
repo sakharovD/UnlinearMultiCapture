@@ -59,9 +59,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functions\Function2.cs" />
-    <Compile Include="Functions\Function1.cs" />
-    <Compile Include="Functions\IFunction.cs" />
     <Compile Include="GameLogic\GameParameters.cs" />
     <Compile Include="GameLogic\GameElements\Evader.cs" />
     <Compile Include="GameLogic\Games\SquareGame.cs" />

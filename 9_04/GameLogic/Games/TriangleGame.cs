@@ -18,8 +18,9 @@ namespace SynchronousMultipleCapture.GameLogic.Games
             this.evader = E;
             Random md = new Random();
 
+            // начальные положения преследователей
             int persuersSetCount = m;
-            for (int persuersSet = 1; persuersSet <= persuersSetCount; persuersSet++) // начальные положения преследователей
+            for (int persuersSet = 1; persuersSet <= persuersSetCount; persuersSet++)
             {
                // for (int persuerNumber = 0; persuerNumber < 3; persuerNumber++)
                // {
